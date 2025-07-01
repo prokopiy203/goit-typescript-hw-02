@@ -95,11 +95,13 @@ function App() {
         />
       )}
       {hasMorePhotos && <LoadMoreButton onClick={loadMore} />}
-      <ImageModal
-        value={imageModal!}
-        isOpen={modalIsOpen}
-        onClose={closeModal}
-      />
+      {imageModal && (
+        <ImageModal
+          value={imageModal!}
+          isOpen={modalIsOpen}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 }
