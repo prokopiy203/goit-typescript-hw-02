@@ -1,0 +1,37 @@
+.boxSearch {
+  height: 40px;
+  background-color: blueviolet;
+  width: 100%;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.inputBox {
+  position: relative;
+}
+
+.input {
+  padding: 8px 20px 10px 30px;
+  width: 400px;
+}
+
+.buttonSearch {
+  top: 49%;
+  left: 0px;
+  transform: translateY(-46%);
+  position: absolute;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+.svgSearch {
+  width: 24px;
+  height: 24px;
+}
+
+.svgSearch:hover {
+  scale: 1.1;
+}
