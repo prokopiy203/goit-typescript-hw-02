@@ -8,7 +8,7 @@ import Loader from "./components/Loader/Loader";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import LoadMoreButton from "./components/LoadMoreButton/LoadMoreButton";
 import toast from "react-hot-toast";
-import { Data, Image, ModalImage, SearchParams } from "./types/types";
+import { Image, ModalImage, SearchParams } from "./types/types";
 
 function App() {
   const [searchParams, setSearchParams] = useState<SearchParams>({
@@ -16,17 +16,19 @@ function App() {
     page: 1,
   });
   const [photos, setPhotos] = useState<Image[]>([]);
+  const [isEmpty, setIsEmpty] = useState<boolean>(false);
   const [hasMorePhotos, setHasMorePhotos] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string>("");
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [imageModal, setImageModal] = useState<ModalImage | null>(null);
 
   const handleSearchSubmit = (query: string): void => {
     setSearchParams({ query, page: 1 });
     setPhotos([]);
-    setError(null);
-    setHasMorePhotos(false);
+    setIsEmpty(false);
+    setHasMorePhotos(true);
+    setError("");
   };
 
   const loadMore = (): void => {
@@ -48,23 +50,28 @@ function App() {
 
     const getPhotos = async () => {
       setLoading(true);
-      setError(null);
+      setError("");
+      setIsEmpty(false);
       try {
-        const response = await fetchData(query, page);
-        const data: Data = response.data;
+        const {
+          results: photos,
+          total,
+          total_pages,
+        } = await fetchData(query, page);
 
-        if (data.total === 0) {
+        if (total === 0) {
+          setIsEmpty(true);
           toast("No results found.");
           return;
         }
 
-        setPhotos((prev) => [...prev, ...data.results]);
-        setHasMorePhotos(page < data.total_pages);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err);
+        setPhotos((prev) => [...prev, ...photos]);
+        setHasMorePhotos(page < total_pages);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
         } else {
-          setError(new Error("НUnidentified error "));
+          setError("Unidentified error");
         }
       } finally {
         setLoading(false);
@@ -78,11 +85,14 @@ function App() {
     <div>
       <SearchBar onSearch={handleSearchSubmit} />
 
-      <ImageGallery values={photos} openModal={openModal} />
+      <ImageGallery images={photos} openModal={openModal} />
 
       {loading && <Loader />}
       {error && (
-        <ErrorMessage message={`Something is wrong: ${error.message}`} />
+        <ErrorMessage
+          message="Failed to load images. Please check your connection or try again later."
+          error={error || "Unknown error"}
+        />
       )}
       {hasMorePhotos && <LoadMoreButton onClick={loadMore} />}
       <ImageModal

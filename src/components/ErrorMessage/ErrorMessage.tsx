@@ -1,10 +1,11 @@
 import css from "./ErrorMessage.module.css";
 
-interface ErrorMessageProps {
+interface Props {
+  error: string;
   message: string;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
+const ErrorMessage: React.FC<Props> = ({ message }) => {
   return (
     <div>
       <p className={css.ErrorMessage}>{message}</p>

@@ -1,25 +1,15 @@
+import { Image, ModalImage } from "../../types/types";
 import css from "./ImageCard.module.css";
 
-interface ModalData {
-  src: string;
-  alt: string | null;
+interface Props {
+  image: Image;
+  openModal: (modalImage: ModalImage) => void;
 }
 
-interface ImageItem {
-  urls: {
-    small: string;
-    regular: string;
-  };
-  alt_description: string | null;
-}
-
-interface ImageCardProps {
-  openModal: (data: ModalData) => void;
-  item: ImageItem;
-}
-
-const ImageCard: React.FC<ImageCardProps> = ({ openModal, item }) => {
-  const { urls, alt_description } = item;
+const ImageCard: React.FC<Props> = ({
+  image: { urls, alt_description, description, links },
+  openModal,
+}) => {
   return (
     <div>
       <img
@@ -28,7 +18,14 @@ const ImageCard: React.FC<ImageCardProps> = ({ openModal, item }) => {
         alt={alt_description ?? undefined}
         width="300"
         height="200"
-        onClick={() => openModal({ src: urls.regular, alt: alt_description })}
+        onClick={() =>
+          openModal({
+            src: urls.full,
+            alt: alt_description ?? null,
+            description: description ?? null,
+            links,
+          })
+        }
       />
     </div>
   );
